@@ -1,0 +1,21 @@
+<ActionBar class="action-bar" title="Notes App">
+  <ActionItem
+    ios.position="right"
+    android.position="actionBar"
+    ios.systemIcon="4"
+    android.systemIcon="ic_input_add"
+    (tap)="addNote()"
+  >
+  </ActionItem>
+</ActionBar>
+
+<GridLayout class="page" rows="*">
+  <ListView [items]="notes$ | async">
+    <ng-template let-note="item" let-i="index">
+      <FlexboxLayout class="note" justifyContent="space-between" [nsRouterLink]="['/notes', note.id]">
+        <Label [text]="note.title"></Label>
+        <Button text="delete" (tap)="delete(note.id)"></Button>
+      </FlexboxLayout>
+    </ng-template>
+  </ListView>
+</GridLayout>
