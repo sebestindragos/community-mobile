@@ -1,0 +1,10 @@
+<!-- <ListView [items]="wallPosts">
+  <ng-template let-post="item">
+    <StackLayout class="wall-post">
+      <Label text="{{post.data.text}}"></Label>
+    </StackLayout>
+  </ng-template>
+</ListView> -->
+<StackLayout class="m-b-5 p-5" *ngFor="let post of wallPosts">
+  <Label class="wall-post" text="{{post.data.text}}"></Label>
+</StackLayout>

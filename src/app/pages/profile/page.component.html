@@ -1,0 +1,16 @@
+<ScrollView>
+  <StackLayout>
+    <StackLayout *ngIf="hasLoaded" style="horizontal-align: center" class="m-y-20">
+    <Label class="fas profile-picture" text="&#xf007;" style="horizontal-align: center"></Label>
+    <Label class="h2" text="{{user.profile.firstname}} {{user.profile.lastname}}"></Label>
+    <WrapLayout style="horizontal-align: center">
+      <Button class="btn btn-success" text="Connect" *ngIf="!isFriend", (tap)="addFriend()"></Button>
+      <Button class="btn btn-danger" text="Remove Friend" *ngIf="isFriend", (tap)="removeFriend()"></Button>
+    </WrapLayout>
+    </StackLayout>
+    <Label class="h3" text="Activity"></Label>
+    <StackLayout class="hr-light m-10"></StackLayout>
+    <ActivityIndicator [busy]="wallPosts.length === 0" class="activity-indicator"></ActivityIndicator>
+    <wall-post-list [wallPosts]="wallPosts"></wall-post-list>
+  </StackLayout>
+</ScrollView>

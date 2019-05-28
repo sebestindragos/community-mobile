@@ -1,0 +1,7 @@
+<StackLayout class="p-x-5">
+  <Label text="Notifications" class="h1"></Label>
+  <StackLayout class="hr-light m-10"></StackLayout>
+  <StackLayout *ngFor="let notification of notifications$ | async">
+    <notification-item [notification]="notification"></notification-item>
+  </StackLayout>
+</StackLayout>

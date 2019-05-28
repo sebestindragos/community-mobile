@@ -1,0 +1,12 @@
+<StackLayout>
+  <StackLayout class="form m-y-10">
+    <StackLayout class="input-field">
+      <TextField class="input input-border" hint="Search user" (textChange)="pushTerm($event.object.text)"></TextField>
+    </StackLayout>
+  </StackLayout>
+
+  <FlexboxLayout class="result" *ngFor="let user of results$ | async">
+    <Label class="fas" text="&#xf007;"></Label>
+    <Label class="m-l-10" text="{{user.profile.firstname}} {{user.profile.lastname}}" [nsRouterLink]="['/u', user._id]"></Label>
+  </FlexboxLayout>
+</StackLayout>

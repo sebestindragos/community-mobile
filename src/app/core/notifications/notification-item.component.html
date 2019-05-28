@@ -1,0 +1,22 @@
+<StackLayout class="shell m-y-5">
+  <GridLayout rows="* auto">
+    <FlexboxLayout row="0" alignItems="center">
+      <StackLayout *ngIf="notification.type === 0">
+        <Label text="{{notification.data.message}}"></Label>
+      </StackLayout>
+      <StackLayout *ngIf="notification.type === 1">
+        <Label text="{{notification.data.fromUser.firstname}} {{notification.data.fromUser.lastname}} wants to connect with you."></Label>
+        <WrapLayout>
+          <Button class="btn btn-primary" text="Accept" (tap)="respondToFriendRequest(true)"></Button>
+          <Button class="btn btn-primary" text="Reject" (tap)="respondToFriendRequest(false)"></Button>
+        </WrapLayout>
+      </StackLayout>
+      <StackLayout *ngIf="notification.type === 2">
+        <Label text="{{notification.data.responder.firstname}} {{notification.data.responder.lastname}} accepted your friend request."></Label>
+      </StackLayout>
+    </FlexboxLayout>
+    <StackLayout row="1">
+      <Label class="body text-muted" text="{{notification.createdAt | date}}"></Label>
+    </StackLayout>
+  </GridLayout>
+</StackLayout>

@@ -1,0 +1,29 @@
+<StackLayout>
+  <Label class="h1" text="Sign Up for a new Community account"></Label>
+  <StackLayout class="form">
+    <StackLayout class="input-field">
+      <TextField class="input input-border" hint="Email" keyboardType="email" autocorrect="false" autocapitalizationType="none" [formControl]="form.controls.email"></TextField>
+    </StackLayout>
+
+    <StackLayout class="input-field">
+      <TextField class="input input-border" hint="Password" [formControl]="form.controls.password" secure="true"></TextField>
+    </StackLayout>
+
+    <StackLayout class="input-field">
+      <TextField class="input input-border" hint="Password" [formControl]="form.controls.password" secure="true"></TextField>
+    </StackLayout>
+
+    <StackLayout class="input-field">
+      <TextField class="input input-border" hint="Firstname" [formControl]="form.controls.firstname"></TextField>
+    </StackLayout>
+
+    <StackLayout class="input-field">
+      <TextField class="input input-border" hint="Lastname" [formControl]="form.controls.lastname"></TextField>
+    </StackLayout>
+
+    <Button text="Sign Up" class="btn btn-primary" (tap)="register()"></Button>
+
+    <Label [text]="resultMessage" class="text-danger"></Label>
+  </StackLayout>
+</StackLayout>
+

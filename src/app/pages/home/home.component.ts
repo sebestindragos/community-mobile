@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewContainerRef } from "@angular/core";
-import { ModalDialogService, ModalDialogOptions } from "nativescript-angular/modal-dialog";
-import { INote, NotesService } from "~/app/core/notes.service";
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from "@angular/core";
+import { RadSideDrawerComponent } from "nativescript-ui-sidedrawer/angular";
+import { UsersApiService } from "~/app/core/users/usersAPI.service";
+import { SessionService } from "~/app/core/users/session.service";
 import { Observable } from "rxjs";
-import { AddNoteModalComponent } from "./add-note-modal.component";
+import { map, switchMap, take } from "rxjs/operators";
+import { SocialService } from "~/app/core/social/social.service";
 
 @Component({
   selector: "Home",
@@ -13,39 +15,89 @@ import { AddNoteModalComponent } from "./add-note-modal.component";
   ]
 })
 export class HomePageComponent implements OnInit {
-  public notes$: Observable<INote[]>;
+  private drawer: any;
+  private _cursor = ''; // id of the last anoucement
+  private _canLoadMore = true;
+  @ViewChild(RadSideDrawerComponent) public drawerComponent: RadSideDrawerComponent;
+  public profile$: any;
+  public isLoggedIn$: Observable<boolean>;
+  public newPostText = '';
+  public wallPosts: any[] = [];
 
   /**
    * Class constructor.
    */
   constructor (
-    private _notesService: NotesService,
-    private _modalService: ModalDialogService,
-    private _viewContainerRef: ViewContainerRef
+    private _changeDetectionRef: ChangeDetectorRef,
+    private _session: SessionService,
+    private _usersApi: UsersApiService,
+    private _socialService: SocialService
   ) {
-    this.notes$ = this._notesService.notes$;
+    this.profile$ = this._session.profile$;
+    this.isLoggedIn$ = this._session.jwt$.pipe(map(jwt => !!jwt));
   }
 
-  ngOnInit(): void {
-    // Init your component properties here.
+  async ngOnInit() {
+    await this.loadMore();
+  }
+
+  ngAfterViewInit() {
+    this.drawer = this.drawerComponent.sideDrawer;
+    this._changeDetectionRef.detectChanges();
+  }
+
+  public openDrawer() {
+    this.drawer.showDrawer();
+  }
+
+  public onCloseDrawerTap() {
+      this.drawer.closeDrawer();
   }
 
   /**
-   * Add a new note.
+   * Check if any user is logged in
    */
-  addNote () {
-    let options: ModalDialogOptions = {
-      viewContainerRef: this._viewContainerRef,
-      fullscreen: true
-    };
-
-    this._modalService.showModal(AddNoteModalComponent, options);
+  hasSession () {
+    return this._session.isLoggedIn();
   }
 
   /**
-   * Delete a note by id.
+   * Logout current user.
    */
-  delete (noteId: number) {
-    this._notesService.delete(noteId);
+  logout () {
+    this._session.logout();
+  }
+
+  /**
+   * Create a new post.
+   */
+  createPost () {
+    this._session.jwt$.pipe(switchMap(
+      token => this._socialService.createWallPost(this.newPostText, token || '')
+    )).subscribe((newPost: any) => {
+      this.newPostText = '';
+      this.wallPosts.unshift(newPost);
+    });
+  }
+
+  /**
+   * Load next batch of polls.
+   */
+  async loadMore () {
+    if (this._canLoadMore) {
+      this._canLoadMore = false;
+      let token = await this._session.jwt$.pipe(take(1)).toPromise();
+      let batch = await this._socialService.getWallPosts({
+        fromId: this._cursor,
+        limit: 100
+      }, token || '').toPromise();
+
+      if (batch.length > 0) {
+        console.log('batch size', batch.length);
+        this._canLoadMore = true;
+        this._cursor = batch[batch.length - 1]._id;
+        this.wallPosts = this.wallPosts.concat(batch);
+      }
+    }
   }
 }

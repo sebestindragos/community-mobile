@@ -1,0 +1,9 @@
+.shell {
+  border-left-width: 3;
+  border-color: #ccc;
+  padding-left: 5;
+  height: 100;
+}
+.shell.unseen {
+  border-color: teal;
+}
